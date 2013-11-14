@@ -14,8 +14,10 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <time.h>
-#include <malloc.h>
 
+#ifndef __APPLE__
+   #include <malloc.h>
+#endif
 
 typedef void *LPVOID;
 typedef uint32_t *LPDWORD;
@@ -76,7 +78,11 @@ void CreateThread(LPVOID ig1, size_t ig2, LPTHREAD_START_ROUTINE func, LPVOID ar
 
 #define Sleep(x) usleep(x*1000)
 
-#define __debugbreak() raise(SIGTRAP)
+#ifdef __APPLE__
+   #define __debugbreak()
+#elif
+   #define __debugbreak() raise(SIGTRAP)
+#endif
 
 #define GetTickCount() (uint32) (time(NULL) - 1383638888) * 1000 // A quick hack for time_t overflow
 
