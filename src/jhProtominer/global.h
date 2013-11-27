@@ -9,6 +9,7 @@
 
 #include<stdio.h>
 #include<time.h>
+#include<stdlib.h>
 
 #include"jhlib.h" // slim version of jh library
 
@@ -76,3 +77,5 @@ void jhProtominer_submitShare(minerProtosharesBlock_t* block);
 // stats
 extern volatile uint32 totalCollisionCount;
 extern volatile uint32 totalShareCount;
+
+extern volatile uint32 monitorCurrentBlockHeight;

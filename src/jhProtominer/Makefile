@@ -6,7 +6,7 @@ app=jhProtominer
 all: $(app)
 
 .cpp.o: 
-	$(CXX) $(CFLAGS) -c -o $@ $<
+	$(CXX) $(CFLAGS) -O3 -march=native -c -o $@ $<
 
 jhProtominer: $(obj)
 	$(CXX) $(LDFLAGS) -o $@ $(obj) -lpthread
