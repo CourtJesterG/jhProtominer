@@ -463,9 +463,13 @@ int main(int argc, char** argv)
 	jhProtominer_parseCommandline(argc, argv);
 	minerSettings.protoshareMemoryMode = commandlineInput.ptsMemoryMode;
 	printf("\xC9\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xBB\n");
-	printf("\xBA  jhProtominer (v0.2a)                            \xBA\n");
-	printf("\xBA  author: jh                                      \xBA\n");
-	printf("\xBA  http://ypool.net                                \xBA\n");
+	printf("\xBA  jhProtominer (v0.2a) + OpenCL GPU Support       \xBA\n");
+	printf("\xBA  author: girino, based on code by jh             \xBA\n");
+	printf("\xBA                                                  \xBA\n");
+	printf("\xBA  If you like it, please donate:                  \xBA\n");
+	printf("\xBA  PTS: PkyeQNn1yGV5psGeZ4sDu6nz2vWHTujf4h         \xBA\n");
+	printf("\xBA  BTC: 1GiRiNoKznfGbt8bkU1Ley85TgVV7ZTXce         \xBA\n");
+	printf("\xBA                                                  \xBA\n");
 	printf("\xC8\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xBC\n");
 
 	if (commandlineInput.listDevices) {
