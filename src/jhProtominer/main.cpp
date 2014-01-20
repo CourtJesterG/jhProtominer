@@ -292,11 +292,15 @@ void jhProtominer_printHelp()
 	puts("                                     You can specifiy an port after the url using -o url:port");
 	puts("   -u                            The username (workername) used for login");
 	puts("   -p                            The password used for login");
-	puts("   -t <num>                      The number of threads for mining (default 4)");
-	puts("                                 For most efficient mining, set to number of CPU cores");
+	puts("   -d <num,num,num>              List of the devices to use (one thread is launched ");
+	puts("                                 per device, default 0)");
 	puts("   -m<amount>                    Defines how many megabytes of memory are used per thread.");
 	puts("                                 Default is 256mb, allowed constants are:");
-	puts("                                 -m512 -m256 -m128 -m32 -m8");
+	puts("                                 -m2048 -m1024 -m512 -m256 -m128 -m32 -m8");
+	puts("                                 Some algorithms, like gpuv4, might consume");
+	puts("                                 an extra amount of fixed memory. (512Mb extra for gpuv4)");
+	puts("   -a <gpuvX>                    select from the available GPU algorithms. Default is gpuv4.");
+	puts("                                 valid values are: gpuv2, gpuv3 and gpuv4.");
 	puts("Example usage:");
 	puts("   jhProtominer.exe -o http://poolurl.com:10034 -u workername.pts_1 -p workerpass -t 4");
 }
