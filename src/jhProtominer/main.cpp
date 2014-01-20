@@ -7,6 +7,9 @@
 #ifdef __WIN32__
 		char* minerVersionString = "jhProtominer v0.2a";
 #else
+#ifdef __CYGWIN__
+#define _strdup strdup
+#endif
 char* minerVersionString = _strdup("jhProtominer v0.2a-Linux");
 #endif
 

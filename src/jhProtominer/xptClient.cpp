@@ -1,9 +1,9 @@
 #include"global.h"
-#ifndef __WIN32__
-#include "win.h"
-#else
+#if defined(__WIN32__) || defined (__CYGWIN__)
 #define strcpy_s(dst, n, src) \
     strncpy((dst), (src), (n))
+#else
+#include "win.h"
 #endif
 
 /*

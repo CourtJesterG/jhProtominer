@@ -1,7 +1,7 @@
 #ifndef __jhprotominer_global_h__
 #define __jhprotominer_global_h__
 
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__CYGWIN__)
 #pragma comment(lib,"Ws2_32.lib")
 #include<Winsock2.h>
 #include<ws2tcpip.h>

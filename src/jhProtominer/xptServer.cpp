@@ -188,7 +188,11 @@ void xptServer_startProcessing(xptServer_t* xptServer)
 			FD_SET(client->clientSocket, &fd);
 		}
 		// check for socket events
+#ifdef __CYGWIN__
+		sint32 r = select(0, &fd, 0, 0, (PTIMEVAL)&sTimeout); // wait one second
+#else
 		sint32 r = select(0, &fd, 0, 0, &sTimeout); // wait one second
+#endif
 		if( r )
 		{
 			// check for new connections
