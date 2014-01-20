@@ -299,7 +299,7 @@ void jhProtominer_printHelp()
 	puts("                         -m2048 -m1024 -m512 -m256 -m128 -m32 -m8");
 	puts("                         Some algorithms, like gpuv4, might consume");
 	puts("                         an extra amount of fixed memory. (512Mb extra for gpuv4)");
-	puts("   -a <gpuvX>            select from the available GPU algorithms. Default is gpuv4.");
+	puts("   -a <gpuvX>            select the GPU algorithm to use. (default gpuv4)");
 	puts("                         valid values are: gpuv2, gpuv3 and gpuv4.");
 	puts("Example usage:");
 	puts("   jhProtominer.exe -o http://poolurl.com:10034 -u workername.pts_1 -p workerpass -d 0");
