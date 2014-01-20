@@ -103,5 +103,19 @@ typedef struct {
 #define SetPriorityClass(pid, priority) \
     nice(priority)
 
+typedef union _LARGE_INTEGER {
+  struct {
+	uint32_t  LowPart;
+    int32_t  HighPart;
+  };
+  struct {
+    uint32_t LowPart;
+    int32_t  HighPart;
+  } u;
+  int64_t QuadPart;
+} LARGE_INTEGER, *PLARGE_INTEGER;
+
+bool QueryPerformanceFrequency(_LARGE_INTEGER *frequency);
+bool QueryPerformanceCounter(_LARGE_INTEGER *performance_count);
 
 #endif

@@ -1,4 +1,5 @@
 #include"global.h"
+#include "win.h"
 
 /*
  * Tries to establish a connection to the given ip:port
