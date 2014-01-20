@@ -1,6 +1,12 @@
+
+#ifdef __WIN32__
 #pragma comment(lib,"Ws2_32.lib")
 #include<Winsock2.h>
 #include<ws2tcpip.h>
+#else
+#include"win.h" // port from windows
+#endif
+
 #include<stdio.h>
 #include<time.h>
 #include<stdlib.h>
@@ -33,11 +39,14 @@ typedef struct
 
 extern minerSettings_t minerSettings;
 
-#define PROTOSHARE_MEM_512		(0)
-#define PROTOSHARE_MEM_256		(1)
-#define PROTOSHARE_MEM_128		(2)
-#define PROTOSHARE_MEM_32		(3)
-#define PROTOSHARE_MEM_8		(4)
+#define PROTOSHARE_MEM_4096		(0)
+#define PROTOSHARE_MEM_2048		(1)
+#define PROTOSHARE_MEM_1024		(2)
+#define PROTOSHARE_MEM_512		(3)
+#define PROTOSHARE_MEM_256		(4)
+#define PROTOSHARE_MEM_128		(5)
+#define PROTOSHARE_MEM_32		(6)
+#define PROTOSHARE_MEM_8		(7)
 
 // block data struct
 

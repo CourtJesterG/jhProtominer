@@ -1,7 +1,11 @@
 #include"global.h"
 
 // miner version string (for pool statistic)
-char* minerVersionString = "jhProtominer v0.2a";
+#ifdef __WIN32__
+		char* minerVersionString = "jhProtominer v0.2a";
+#else
+char* minerVersionString = _strdup("jhProtominer v0.2a-Linux");
+#endif
 
 minerSettings_t minerSettings = {0};
 
@@ -9,7 +13,7 @@ xptClient_t* xptClient = NULL;
 CRITICAL_SECTION cs_xptClient;
 volatile uint32 monitorCurrentBlockHeight; // used to notify worker threads of new block data
 
-struct  
+static struct  
 {
 	CRITICAL_SECTION cs_work;
 	uint32	algorithm;
@@ -104,6 +108,15 @@ int jhProtominer_minerThread(int threadIndex)
 		// valid work data present, start mining
 		switch( minerSettings.protoshareMemoryMode )
 		{
+		case PROTOSHARE_MEM_4096:
+			protoshares_process_4096(&minerProtosharesBlock);
+			break;
+		case PROTOSHARE_MEM_2048:
+			protoshares_process_2048(&minerProtosharesBlock);
+			break;
+		case PROTOSHARE_MEM_1024:
+			protoshares_process_1024(&minerProtosharesBlock);
+			break;
 		case PROTOSHARE_MEM_512:
 			protoshares_process_512(&minerProtosharesBlock);
 			break;
@@ -371,6 +384,18 @@ void jhProtominer_parseCommandline(int argc, char **argv)
 			}
 			cIdx++;
 		}
+		else if( memcmp(argument, "-m4096", 7)==0 )
+		{
+			commandlineInput.ptsMemoryMode = PROTOSHARE_MEM_4096;
+		}
+		else if( memcmp(argument, "-m2048", 7)==0 )
+		{
+			commandlineInput.ptsMemoryMode = PROTOSHARE_MEM_2048;
+		}
+		else if( memcmp(argument, "-m1024", 7)==0 )
+		{
+			commandlineInput.ptsMemoryMode = PROTOSHARE_MEM_1024;
+		}
 		else if( memcmp(argument, "-m512", 6)==0 )
 		{
 			commandlineInput.ptsMemoryMode = PROTOSHARE_MEM_512;
@@ -428,7 +453,7 @@ int main(int argc, char** argv)
 	printf("\xBA  http://ypool.net                                \xBA\n");
 	printf("\xC8\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xBC\n");
 	printf("Launching miner...\n");
-	uint32 mbTable[] = {512,256,128,32,8};
+	uint32 mbTable[] = {4096,2048,1024,512,256,128,32,8};
 	printf("Using %d megabytes of memory per thread\n", mbTable[min(commandlineInput.ptsMemoryMode,(sizeof(mbTable)/sizeof(mbTable[0])))]);
 	printf("Using %d threads\n", commandlineInput.numThreads);
 	// set priority to below normal
