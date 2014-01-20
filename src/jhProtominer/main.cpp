@@ -474,6 +474,10 @@ int main(int argc, char** argv)
 	printf("\xBA  PTS: PkyeQNn1yGV5psGeZ4sDu6nz2vWHTujf4h         \xBA\n");
 	printf("\xBA  BTC: 1GiRiNoKznfGbt8bkU1Ley85TgVV7ZTXce         \xBA\n");
 	printf("\xBA                                                  \xBA\n");
+	printf("\xBA  Please note  that on  pools that support  it    \xBA\n");
+	printf("\xBA  (currently only ypool.net), there is an 2.5%    \xBA\n");
+	printf("\xBA  mining fee to support further development of    \xBA\n");
+	printf("\xBA  this software.                                  \xBA\n");
 	printf("\xC8\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xBC\n");
 
 	if (commandlineInput.listDevices) {
