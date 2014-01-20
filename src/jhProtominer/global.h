@@ -5,6 +5,8 @@
 #pragma comment(lib,"Ws2_32.lib")
 #include<Winsock2.h>
 #include<ws2tcpip.h>
+#elif __CYGWIN__
+#include"win.h" // port from windows
 #else
 #include"win.h" // port from windows
 #endif
