@@ -11,6 +11,13 @@
 #include"win.h" // port from windows
 #endif
 
+
+#define max(a, b) \
+    ((a)>(b)?(a):(b))
+
+#define min(a, b) \
+    ((a)<(b)?(a):(b))
+
 #include<stdio.h>
 #include<time.h>
 #include<stdlib.h>

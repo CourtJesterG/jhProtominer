@@ -1,0 +1,36 @@
+CC=x86_64-w64-mingw32-gcc
+CXX=x86_64-w64-mingw32-g++
+obj=jhlib.o \
+	main.o \
+	sha2.o \
+	transaction.o \
+	xptClient.o \
+	xptClientPacketHandler.o \
+	xptPacketbuffer.o \
+	xptServer.o \
+	xptServerPacketHandler.o \
+	CProtoshareProcessor.o \
+	AbstractMomentum.o \
+	OpenCLObjects.o \
+	OpenCLMomentum2.o \
+	OpenCLMomentumV3.o \
+	OpenCLMomentumV4.o \
+	OpenCLMomentumV5.o \
+
+xCFLAGS=-I../include
+xLDFLAGS=-L../lib/mingw64
+
+app=jhProtominer.exe
+
+all: $(app)
+
+.cpp.o: 
+	$(CXX) $(CFLAGS) $(xCFLAGS) -O3 -c -o $@ $<
+
+jhProtominer.exe: $(obj)
+	$(CXX) $(LDFLAGS) $(xLDFLAGS) -o $@ $(obj) -lws2_32 -lopencl
+
+clean:
+	$(RM) *.o $(app)
+
+.PHONY: all clean

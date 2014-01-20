@@ -1,5 +1,10 @@
 #include"global.h"
+#ifndef __WIN32__
 #include "win.h"
+#else
+#define strcpy_s(dst, n, src) \
+    strncpy((dst), (src), (n))
+#endif
 
 /*
  * Tries to establish a connection to the given ip:port

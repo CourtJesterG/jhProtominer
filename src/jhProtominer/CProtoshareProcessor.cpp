@@ -18,7 +18,6 @@
 #include "OpenCLMomentumV5.h"
 #include "OpenCLMomentum2.h"
 #include "global.h"
-#include <sys/mman.h>
 #include <assert.h>
 
 volatile uint32 totalCollisionCount = 0;
