@@ -1,3 +1,5 @@
+#ifndef __jhprotominer_global_h__
+#define __jhprotominer_global_h__
 
 #ifdef __WIN32__
 #pragma comment(lib,"Ws2_32.lib")
@@ -39,14 +41,14 @@ typedef struct
 
 extern minerSettings_t minerSettings;
 
-#define PROTOSHARE_MEM_4096		(0)
-#define PROTOSHARE_MEM_2048		(1)
-#define PROTOSHARE_MEM_1024		(2)
-#define PROTOSHARE_MEM_512		(3)
-#define PROTOSHARE_MEM_256		(4)
-#define PROTOSHARE_MEM_128		(5)
-#define PROTOSHARE_MEM_32		(6)
-#define PROTOSHARE_MEM_8		(7)
+#define PROTOSHARE_MEM_4096		(30)
+#define PROTOSHARE_MEM_2048		(29)
+#define PROTOSHARE_MEM_1024		(28)
+#define PROTOSHARE_MEM_512		(27)
+#define PROTOSHARE_MEM_256		(26)
+#define PROTOSHARE_MEM_128		(25)
+#define PROTOSHARE_MEM_32		(24)
+#define PROTOSHARE_MEM_8		(23)
 
 // block data struct
 
@@ -70,8 +72,6 @@ typedef struct
 	uint8	targetShare[32];
 }minerProtosharesBlock_t;
 
-#include"algorithm.h"
-
 void jhProtominer_submitShare(minerProtosharesBlock_t* block);
 
 // stats
@@ -79,3 +79,5 @@ extern volatile uint32 totalCollisionCount;
 extern volatile uint32 totalShareCount;
 
 extern volatile uint32 monitorCurrentBlockHeight;
+
+#endif //__jhprotominer_global_h__

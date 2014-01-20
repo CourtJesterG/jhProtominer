@@ -1,4 +1,7 @@
-#include"global.h"
+#include "global.h"
+#include "CProtoshareProcessor.h"
+#include "OpenCLObjects.h"
+#include <vector>
 
 // miner version string (for pool statistic)
 #ifdef __WIN32__
@@ -12,6 +15,27 @@ minerSettings_t minerSettings = {0};
 xptClient_t* xptClient = NULL;
 CRITICAL_SECTION cs_xptClient;
 volatile uint32 monitorCurrentBlockHeight; // used to notify worker threads of new block data
+
+typedef struct
+{
+	char* workername;
+	char* workerpass;
+	char* host;
+	sint32 port;
+	sint32 numThreads;
+	uint32 ptsMemoryMode;
+	// GPU / OpenCL options
+	GPUALGO gpuAlgo;
+	uint32 deviceNum;
+	bool listDevices;
+	std::vector<int> deviceList;
+
+	// mode option
+	uint32 mode;
+}commandlineInput_t;
+
+commandlineInput_t commandlineInput;
+std::vector<CProtoshareProcessorGPU *> gpu_processors;
 
 static struct  
 {
@@ -73,6 +97,11 @@ void jhProtominer_submitShare(minerProtosharesBlock_t* block)
 
 int jhProtominer_minerThread(int threadIndex)
 {
+	// inits processor
+	CProtoshareProcessorGPU *processor = gpu_processors.back();
+	gpu_processors.pop_back();
+	// pop_back since i'm not sure i can guarantee threadIndex to mean something
+
 	while( true )
 	{
 		// local work data
@@ -106,37 +135,7 @@ int jhProtominer_minerThread(int threadIndex)
 			continue;
 		}
 		// valid work data present, start mining
-		switch( minerSettings.protoshareMemoryMode )
-		{
-		case PROTOSHARE_MEM_4096:
-			protoshares_process_4096(&minerProtosharesBlock);
-			break;
-		case PROTOSHARE_MEM_2048:
-			protoshares_process_2048(&minerProtosharesBlock);
-			break;
-		case PROTOSHARE_MEM_1024:
-			protoshares_process_1024(&minerProtosharesBlock);
-			break;
-		case PROTOSHARE_MEM_512:
-			protoshares_process_512(&minerProtosharesBlock);
-			break;
-		case PROTOSHARE_MEM_256:
-			protoshares_process_256(&minerProtosharesBlock);
-			break;
-		case PROTOSHARE_MEM_128:
-			protoshares_process_128(&minerProtosharesBlock);
-			break;
-		case PROTOSHARE_MEM_32:
-			protoshares_process_32(&minerProtosharesBlock);
-			break;
-		case PROTOSHARE_MEM_8:
-			protoshares_process_8(&minerProtosharesBlock);
-			break;
-		default:
-			printf("Unknown memory mode\n");
-			Sleep(5000);
-			break;
-		}
+		processor->protoshares_process(&minerProtosharesBlock);
 	}
 	return 0;
 }
@@ -285,23 +284,6 @@ void jhProtominer_xptQueryWorkLoop()
 	}
 }
 
-
-typedef struct  
-{
-	char* workername;
-	char* workerpass;
-	char* host;
-	sint32 port;
-	sint32 numThreads;
-	uint32 ptsMemoryMode;
-	// GPU / OpenCL options
-
-	// mode option
-	uint32 mode;
-}commandlineInput_t;
-
-commandlineInput_t commandlineInput;
-
 void jhProtominer_printHelp()
 {
 	puts("Usage: jhProtominer.exe [options]");
@@ -368,18 +350,44 @@ void jhProtominer_parseCommandline(int argc, char **argv)
 			commandlineInput.workerpass = _strdup(argv[cIdx]);
 			cIdx++;
 		}
-		else if( memcmp(argument, "-t", 3)==0 )
+		else if( memcmp(argument, "-device", 8)==0 || memcmp(argument, "-d", 3)==0 || memcmp(argument, "-devices", 9)==0)
 		{
-			// -t
+			// -d
 			if( cIdx >= argc )
 			{
-				printf("Missing thread number after -t option\n");
+				printf("Missing device list after %s option\n", argument);
 				exit(0);
 			}
-			commandlineInput.numThreads = atoi(argv[cIdx]);
-			if( commandlineInput.numThreads < 1 || commandlineInput.numThreads > 128 )
+			std::string list = std::string(argv[cIdx]);
+			std::string delimiter = ",";
+			size_t pos = 0;
+			while ((pos = list.find(delimiter)) != std::string::npos) {
+				std::string token = list.substr(0, pos);
+				commandlineInput.deviceList.push_back(atoi(token.c_str()));
+			    list.erase(0, pos + delimiter.length());
+			}
+			commandlineInput.deviceList.push_back(atoi(list.c_str()));
+			cIdx++;
+		}
+		else if( memcmp(argument, "-algo", 6)==0 || memcmp(argument, "-a", 3)==0 || memcmp(argument, "-gpu", 5)==0)
+		{
+			// -a
+			if( cIdx >= argc )
 			{
-				printf("-t parameter out of range");
+				printf("Missing algorithm after %s option\n", argument);
+				exit(0);
+			}
+			char* param = argv[cIdx];
+			if (memcmp(param, "gpuv2", 6)==0) {
+				commandlineInput.gpuAlgo = GPUV2;
+			} else if (memcmp(param, "gpuv3", 6)==0) {
+				commandlineInput.gpuAlgo = GPUV3;
+			} else if (memcmp(param, "gpuv4", 6)==0) {
+				commandlineInput.gpuAlgo = GPUV4;
+			} else if (memcmp(param, "gpuv5", 6)==0) {
+				commandlineInput.gpuAlgo = GPUV5;
+			} else {
+				printf("Invalid algorithm: %s\n", param);
 				exit(0);
 			}
 			cIdx++;
@@ -416,6 +424,10 @@ void jhProtominer_parseCommandline(int argc, char **argv)
 		{
 			commandlineInput.ptsMemoryMode = PROTOSHARE_MEM_8;
 		}
+		else if( memcmp(argument, "-list-devices", 14)==0 )
+		{
+			commandlineInput.listDevices = true;
+		}
 		else if( memcmp(argument, "-help", 6)==0 || memcmp(argument, "--help", 7)==0 )
 		{
 			jhProtominer_printHelp();
@@ -443,8 +455,11 @@ int main(int argc, char** argv)
 	commandlineInput.ptsMemoryMode = PROTOSHARE_MEM_256;
 	SYSTEM_INFO sysinfo;
 	GetSystemInfo( &sysinfo );
-	commandlineInput.numThreads = sysinfo.dwNumberOfProcessors;
-	commandlineInput.numThreads = min(max(commandlineInput.numThreads, 1), 4);
+	commandlineInput.numThreads = 1;
+	commandlineInput.deviceNum = 0;
+	commandlineInput.gpuAlgo = GPUV4;
+	commandlineInput.listDevices = false;
+	commandlineInput.deviceList.clear();
 	jhProtominer_parseCommandline(argc, argv);
 	minerSettings.protoshareMemoryMode = commandlineInput.ptsMemoryMode;
 	printf("\xC9\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xBB\n");
@@ -452,10 +467,40 @@ int main(int argc, char** argv)
 	printf("\xBA  author: jh                                      \xBA\n");
 	printf("\xBA  http://ypool.net                                \xBA\n");
 	printf("\xC8\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xBC\n");
+
+	if (commandlineInput.listDevices) {
+		printf("Available devices:\n");
+		OpenCLMain::getInstance().listDevices();
+		exit(0);
+	}
 	printf("Launching miner...\n");
-	uint32 mbTable[] = {4096,2048,1024,512,256,128,32,8};
-	printf("Using %d megabytes of memory per thread\n", mbTable[min(commandlineInput.ptsMemoryMode,(sizeof(mbTable)/sizeof(mbTable[0])))]);
+	size_t mbs = ((1<<commandlineInput.ptsMemoryMode)*sizeof(uint32_t))/(1024*1024);
+	if (commandlineInput.gpuAlgo == GPUV4) {
+		mbs += (MAX_MOMENTUM_NONCE*sizeof(uint64_t))/(1024*1024);
+	}
+	printf("Using %ld megabytes of memory per thread\n", mbs);
 	printf("Using %d threads\n", commandlineInput.numThreads);
+
+	printf("Available devices:\n");
+	OpenCLMain::getInstance().listDevices();
+	if (commandlineInput.deviceList.empty()) {
+		for (int i = 0; i < commandlineInput.numThreads; i++) {
+			commandlineInput.deviceList.push_back(i);
+		}
+	} else {
+		commandlineInput.numThreads = commandlineInput.deviceList.size();
+	}
+	printf("Adjusting num threads to match device list: %d\n", commandlineInput.numThreads);
+
+	// inits all GPU devices
+	printf("Initializing GPU...\n");
+	for (int i = 0; i < commandlineInput.deviceList.size(); i++) {
+		printf("Initing device %d.\n", i);
+		gpu_processors.push_back(new CProtoshareProcessorGPU(commandlineInput.gpuAlgo, commandlineInput.ptsMemoryMode, i, commandlineInput.deviceList[i]));
+		printf("Device %d Inited.\n", i);
+	}
+	printf("All GPUs Initialized...\n");
+
 	// set priority to below normal
 	SetPriorityClass(GetCurrentProcess(), BELOW_NORMAL_PRIORITY_CLASS);
 	// init winsock
