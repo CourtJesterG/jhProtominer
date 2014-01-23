@@ -392,13 +392,14 @@ SHA512_PreFinal (SHA512_Context *sc)
 void
 SHA512_Final_Shift (SHA512_Context *sc, uint32_t pokeval, uint8_t hash[SHA512_HASH_SIZE])
 {
+  int i;
   memcpy (&sc->buffer.bytes[0], &pokeval, 4);
 
   sha512_update_single_func(sc->buffer.words, sc->hash, 1);
   
   uint64_t *hash64 = (uint64_t *)hash;
   
-  for (int i = 0; i < 8; i++) {
+  for (i = 0; i < 8; i++) {
     hash64[i] = (BYTESWAP64(sc->hash[i]));
     sc->hash[i] = iv512[i];
   }
