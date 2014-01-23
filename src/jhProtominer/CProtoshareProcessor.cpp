@@ -16,6 +16,7 @@
 #include "OpenCLMomentumV3.h"
 #include "OpenCLMomentumV4.h"
 #include "OpenCLMomentumV5.h"
+#include "OpenCLMomentumV6.h"
 #include "OpenCLMomentum2.h"
 #include "global.h"
 #include <assert.h>
@@ -139,6 +140,8 @@ CProtoshareProcessorGPU::CProtoshareProcessorGPU(GPUALGO gpu_algorithm, unsigned
 		M1 = new OpenCLMomentumV4(_collisionTableBits, _device_num);
 	} else if (gpu_algorithm == GPUV5) {
 		M1 = new OpenCLMomentumV5(_collisionTableBits, _device_num);
+	} else if (gpu_algorithm == GPUV6) {
+		M1 = new OpenCLMomentumV6(_collisionTableBits, _device_num);
 	} else {
 		assert(gpu_algorithm <= 4 && gpu_algorithm >= 2);
 	}

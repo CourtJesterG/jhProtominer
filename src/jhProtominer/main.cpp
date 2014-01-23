@@ -302,8 +302,8 @@ void jhProtominer_printHelp()
 	puts("                         -m2048 -m1024 -m512 -m256 -m128 -m32 -m8");
 	puts("                         Some algorithms, like gpuv4, might consume");
 	puts("                         an extra amount of fixed memory. (512Mb extra for gpuv4)");
-	puts("   -a <gpuvX>            select the GPU algorithm to use. (default gpuv4)");
-	puts("                         valid values are: gpuv2, gpuv3 and gpuv4.");
+	puts("   -a <gpuvX>            select the GPU algorithm to use. (default gpuv6)");
+	puts("                         valid values are: gpuv2, gpuv3, gpuv4 and gpuv6.");
 	puts("Example usage:");
 	puts("   jhProtominer.exe -o http://poolurl.com:10034 -u workername.pts_1 -p workerpass -d 0");
 }
@@ -393,6 +393,8 @@ void jhProtominer_parseCommandline(int argc, char **argv)
 				commandlineInput.gpuAlgo = GPUV4;
 			} else if (memcmp(param, "gpuv5", 6)==0) {
 				commandlineInput.gpuAlgo = GPUV5;
+			} else if (memcmp(param, "gpuv6", 6)==0) {
+				commandlineInput.gpuAlgo = GPUV6;
 			} else {
 				printf("Invalid algorithm: %s\n", param);
 				exit(0);
@@ -464,7 +466,7 @@ int main(int argc, char** argv)
 	GetSystemInfo( &sysinfo );
 	commandlineInput.numThreads = 1;
 	commandlineInput.deviceNum = 0;
-	commandlineInput.gpuAlgo = GPUV4;
+	commandlineInput.gpuAlgo = GPUV6;
 	commandlineInput.listDevices = false;
 	commandlineInput.deviceList.clear();
 	jhProtominer_parseCommandline(argc, argv);

@@ -2,6 +2,7 @@
 obj=jhlib.o \
 	main.o \
 	sha2.o \
+	sha512.o \
 	transaction.o \
 	xptClient.o \
 	xptClientPacketHandler.o \
@@ -15,6 +16,7 @@ obj=jhlib.o \
 	OpenCLMomentumV3.o \
 	OpenCLMomentumV4.o \
 	OpenCLMomentumV5.o \
+	OpenCLMomentumV6.o \
 
 app=jhProtominer
 

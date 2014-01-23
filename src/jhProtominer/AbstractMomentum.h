@@ -28,7 +28,7 @@
 #define COLLISION_KEY_MASK 0xFF800000UL
 
 
-enum GPUALGO { GPUV2 = 2, GPUV3, GPUV4, GPUV5 };
+enum GPUALGO { GPUV2 = 2, GPUV3, GPUV4, GPUV5, GPUV6 };
 
 typedef struct _collision_struct {
 	uint64_t birthday;
