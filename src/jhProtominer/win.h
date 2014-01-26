@@ -80,7 +80,7 @@ void CreateThread(LPVOID ig1, size_t ig2, LPTHREAD_START_ROUTINE func, LPVOID ar
 
 #ifdef __APPLE__
    #define __debugbreak()
-#elif
+#else
    #define __debugbreak() raise(SIGTRAP)
 #endif
 
