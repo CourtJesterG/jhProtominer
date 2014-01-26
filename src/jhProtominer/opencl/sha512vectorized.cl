@@ -102,7 +102,11 @@ inline void sha512_block(ulong8 * H, ulong w[16])
 	t2 = Maj(H->s0, H->s1, H->s2) + Sigma0(H->s0); \
 	*H = H->s70123456; H->s0 = t1 + t2; H->s4 += t1;
 
-	step0to15(0); step0to15(1); step0to15(2); step0to15(3);
+	t1 = k[0] + w[0] + H->s7 + Sigma1(H->s4) + Ch(H->s4, H->s5, H->s6); \
+	t2 = Maj(H->s0, H->s1, H->s2) + Sigma0(H->s0); \
+	*H = H->s70123456; H->s0 = t1 + t2; H->s4 += t1;
+
+	step0to15(1); step0to15(2); step0to15(3);
 	step0to15(4); step0to15(5); step0to15(6); step0to15(7);
 	step0to15(8); step0to15(9); step0to15(10);step0to15(11);
 	step0to15(12);step0to15(13);step0to15(14);step0to15(15);
