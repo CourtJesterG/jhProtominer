@@ -98,13 +98,13 @@ inline void sha512_block(ulong8 * H, ulong w[16])
 
 	// do not do this at home,
 	// this is very, very bad practice, but it's really great for loop unrolling
-#define step0to15(i) t1 = k[i] + w[i] + H->s7 + Sigma1(H->s4) + Ch(H->s4, H->s5, H->s6); \
-	t2 = Maj(H->s0, H->s1, H->s2) + Sigma0(H->s0); \
-	*H = H->s70123456; H->s0 = t1 + t2; H->s4 += t1;
+#define step0to15(i) t1 = k[i] + w[i] + (*H).s7 + Sigma1((*H).s4) + Ch((*H).s4, (*H).s5, (*H).s6); \
+	t2 = Maj((*H).s0, (*H).s1, (*H).s2) + Sigma0((*H).s0); \
+	*H = (*H).s70123456; (*H).s0 = t1 + t2; (*H).s4 += t1;
 
-	t1 = k[0] + w[0] + H->s7 + Sigma1(H->s4) + Ch(H->s4, H->s5, H->s6); \
-	t2 = Maj(H->s0, H->s1, H->s2) + Sigma0(H->s0); \
-	*H = H->s70123456; H->s0 = t1 + t2; H->s4 += t1;
+	t1 = k[0] + w[0] + (*H).s7 + Sigma1((*H).s4) + Ch((*H).s4, (*H).s5, (*H).s6); \
+	t2 = Maj((*H).s0, (*H).s1, (*H).s2) + Sigma0((*H).s0); \
+	*H = (*H).s70123456; (*H).s0 = t1 + t2; (*H).s4 += t1;
 
 	step0to15(1); step0to15(2); step0to15(3);
 	step0to15(4); step0to15(5); step0to15(6); step0to15(7);
@@ -114,9 +114,9 @@ inline void sha512_block(ulong8 * H, ulong w[16])
 	// do not do this at home,
 	// this is very, very bad practice, but it's really great for loop unrolling
 #define step16to80(i) w[i & 15] = sigma1(w[(i - 2) & 15]) + sigma0(w[(i - 15) & 15]) + w[(i -16) & 15] + w[(i - 7) & 15]; \
-		t1 = k[i] + w[i & 15] + H->s7 + Sigma1(H->s4) + Ch(H->s4, H->s5, H->s6); \
-		t2 = Maj(H->s0, H->s1, H->s2) + Sigma0(H->s0); \
-		*H = H->s70123456; H->s0 = t1 + t2; H->s4 += t1;
+		t1 = k[i] + w[i & 15] + (*H).s7 + Sigma1((*H).s4) + Ch((*H).s4, (*H).s5, (*H).s6); \
+		t2 = Maj((*H).s0, (*H).s1, (*H).s2) + Sigma0((*H).s0); \
+		*H = (*H).s70123456; (*H).s0 = t1 + t2; (*H).s4 += t1;
 
 	step16to80(16);step16to80(17);step16to80(18);step16to80(19);
 	step16to80(20);step16to80(21);step16to80(22);step16to80(23);
