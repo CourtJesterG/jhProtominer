@@ -302,8 +302,12 @@ void jhProtominer_printHelp()
 	puts("                         -m2048 -m1024 -m512 -m256 -m128 -m32 -m8");
 	puts("                         Some algorithms, like gpuv4, might consume");
 	puts("                         an extra amount of fixed memory. (512Mb extra for gpuv4)");
-	puts("   -a <gpuvX>            select the GPU algorithm to use. (default gpuv6)");
-	puts("                         valid values are: gpuv2, gpuv3, gpuv4 and gpuv6.");
+	puts("   -a <gpuvX>            select the GPU algorithm to use. (default gpuv7)");
+	puts("                         valid values are: gpuv2 to gpuv9.");
+	puts("                         gpuv6 to gpuv9 use optimized sha512.");
+	puts("                         gpuv3 and gpuv9 do not store hashes in memory, ");
+	puts("                         and thus use much less memory. if gpuv7 fails for you,");
+	puts("                         use gpuv9.");
 	puts("Example usage:");
 	puts("   jhProtominer.exe -o http://poolurl.com:10034 -u workername.pts_1 -p workerpass -d 0");
 }
@@ -395,6 +399,12 @@ void jhProtominer_parseCommandline(int argc, char **argv)
 				commandlineInput.gpuAlgo = GPUV5;
 			} else if (memcmp(param, "gpuv6", 6)==0) {
 				commandlineInput.gpuAlgo = GPUV6;
+			} else if (memcmp(param, "gpuv7", 6)==0) {
+				commandlineInput.gpuAlgo = GPUV7;
+			} else if (memcmp(param, "gpuv8", 6)==0) {
+				commandlineInput.gpuAlgo = GPUV8;
+			} else if (memcmp(param, "gpuv9", 6)==0) {
+				commandlineInput.gpuAlgo = GPUV9;
 			} else {
 				printf("Invalid algorithm: %s\n", param);
 				exit(0);
@@ -425,9 +435,17 @@ void jhProtominer_parseCommandline(int argc, char **argv)
 		{
 			commandlineInput.ptsMemoryMode = PROTOSHARE_MEM_128;
 		}
+		else if( memcmp(argument, "-m64", 5)==0 )
+		{
+			commandlineInput.ptsMemoryMode = PROTOSHARE_MEM_64;
+		}
 		else if( memcmp(argument, "-m32", 5)==0 )
 		{
 			commandlineInput.ptsMemoryMode = PROTOSHARE_MEM_32;
+		}
+		else if( memcmp(argument, "-m16", 5)==0 )
+		{
+			commandlineInput.ptsMemoryMode = PROTOSHARE_MEM_16;
 		}
 		else if( memcmp(argument, "-m8", 4)==0 )
 		{
@@ -461,12 +479,12 @@ int main(int argc, char** argv)
 	commandlineInput.host = "ypool.net";
 	srand(GetTickCount());
 	commandlineInput.port = 8080 + (rand()%8); // use random port between 8080 and 8088
-	commandlineInput.ptsMemoryMode = PROTOSHARE_MEM_256;
+	commandlineInput.ptsMemoryMode = PROTOSHARE_MEM_512;
 	SYSTEM_INFO sysinfo;
 	GetSystemInfo( &sysinfo );
 	commandlineInput.numThreads = 1;
 	commandlineInput.deviceNum = 0;
-	commandlineInput.gpuAlgo = GPUV6;
+	commandlineInput.gpuAlgo = GPUV7;
 	commandlineInput.listDevices = false;
 	commandlineInput.deviceList.clear();
 	jhProtominer_parseCommandline(argc, argv);
@@ -492,7 +510,8 @@ int main(int argc, char** argv)
 	}
 	printf("Launching miner...\n");
 	size_t mbs = ((1<<commandlineInput.ptsMemoryMode)*sizeof(uint32_t))/(1024*1024);
-	if (commandlineInput.gpuAlgo == GPUV4) {
+	if (commandlineInput.gpuAlgo == GPUV4 || commandlineInput.gpuAlgo == GPUV6
+			|| commandlineInput.gpuAlgo == GPUV7 || commandlineInput.gpuAlgo == GPUV8) {
 		mbs += (MAX_MOMENTUM_NONCE*sizeof(uint64_t))/(1024*1024);
 	}
 	printf("Using %ld megabytes of memory per thread\n", mbs);

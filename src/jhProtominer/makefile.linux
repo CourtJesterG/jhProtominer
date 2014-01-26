@@ -18,6 +18,9 @@ obj=jhlib.o \
 	OpenCLMomentumV4.o \
 	OpenCLMomentumV5.o \
 	OpenCLMomentumV6.o \
+	OpenCLMomentumV7.o \
+	OpenCLMomentumV8.o \
+	OpenCLMomentumV9.o \
 
 app=jhProtominer
 

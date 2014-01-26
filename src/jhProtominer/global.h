@@ -11,6 +11,15 @@
 #include"win.h" // port from windows
 #endif
 
+#define SWAP64(n) \
+            (((n) << 56)                      \
+          | (((n) & 0xff00) << 40)            \
+          | (((n) & 0xff0000) << 24)          \
+          | (((n) & 0xff000000) << 8)         \
+          | (((n) >> 8) & 0xff000000)         \
+          | (((n) >> 24) & 0xff0000)          \
+          | (((n) >> 40) & 0xff00)            \
+          | ((n) >> 56))
 
 #define max(a, b) \
     ((a)>(b)?(a):(b))
@@ -56,8 +65,10 @@ extern minerSettings_t minerSettings;
 #define PROTOSHARE_MEM_512		(27)
 #define PROTOSHARE_MEM_256		(26)
 #define PROTOSHARE_MEM_128		(25)
-#define PROTOSHARE_MEM_32		(24)
-#define PROTOSHARE_MEM_8		(23)
+#define PROTOSHARE_MEM_64		(24)
+#define PROTOSHARE_MEM_32		(23)
+#define PROTOSHARE_MEM_16		(22)
+#define PROTOSHARE_MEM_8		(21)
 
 // block data struct
 
